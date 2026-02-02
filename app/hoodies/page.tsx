@@ -1,17 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const Tshirts = () => {
+const Hoodies = () => {
   return (
     <div>
       <section className="text-gray-600 body-font bg-white">
         <div className="container px-5 py-10 mx-auto">
           <div className="flex flex-wrap text-center items-center -m-4">
             <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
-              <Link href={"/products/wear-the-code"}>
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
@@ -19,7 +22,7 @@ const Tshirts = () => {
 
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     The Catalyzer
@@ -29,18 +32,22 @@ const Tshirts = () => {
                 </div>
               </Link>
             </div>
-            <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md ">
-              <Link href={"/products/wear-the-code"}>
+            <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
                 />
+
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     Shooting Stars
@@ -51,17 +58,21 @@ const Tshirts = () => {
               </Link>
             </div>
             <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
-              <Link href={"/products/wear-the-code"}>
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
                 />
+
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     Neptune
@@ -72,17 +83,21 @@ const Tshirts = () => {
               </Link>
             </div>
             <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
-              <Link href={"/products/wear-the-code"}>
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
                 />
+
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     The 400 Blows
@@ -93,17 +108,21 @@ const Tshirts = () => {
               </Link>
             </div>
             <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
-              <Link href={"/products/wear-the-code"}>
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
                 />
+
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     The Catalyzer
@@ -114,17 +133,21 @@ const Tshirts = () => {
               </Link>
             </div>
             <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
-              <Link href={"/products/wear-the-code"}>
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
                 />
+
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     Shooting Stars
@@ -135,17 +158,21 @@ const Tshirts = () => {
               </Link>
             </div>
             <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
-              <Link href={"/products/wear-the-code"}>
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
                 />
+
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     Neptune
@@ -156,17 +183,21 @@ const Tshirts = () => {
               </Link>
             </div>
             <div className="lg:w-1/4 md:w-1/2 p-6 w-full shadow-md">
-              <Link href={"/products/wear-the-code"}>
+              <Link
+                href={"/products/wear-the-code"}
+                className="block relative rounded overflow-hidden"
+              >
                 <Image
                   alt="ecommerce"
-                  src="/tshirt.webp"
+                  src="/hoodies.jpg"
                   width={300}
                   height={400}
                   className="inline-block w-full h-auto object-contain"
                 />
+
                 <div className="mt-4">
                   <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                    T-SHIRTS
+                    HOODIES
                   </h3>
                   <h2 className="text-gray-900 title-font text-lg font-medium">
                     The 400 Blows
@@ -183,4 +214,4 @@ const Tshirts = () => {
   );
 };
 
-export default Tshirts;
+export default Hoodies;
