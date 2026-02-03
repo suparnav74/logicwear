@@ -1,7 +1,20 @@
 "use client";
 import Image from "next/image";
+import { useState } from "react";
 
 const Product = () => {
+  const [pincode, setPincode] = useState("");
+  const [message, setMessage] = useState("");
+
+  const checkPincode = () => {
+    if (pincode.length !== 6) {
+      setMessage("❌ Please enter a valid 6-digit pincode");
+      return;
+    }
+
+    // Dummy logic (replace with API later)
+    setMessage("✅ Delivery available in your area");
+  };
   return (
     <>
       <section className="text-gray-600 body-font overflow-hidden bg-white">
@@ -181,6 +194,38 @@ const Product = () => {
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                   </svg>
                 </button>
+              </div>
+              <div className="mt-6 p-2 bg-gray-50">
+                <h3 className="font-medium text-gray-900 mb-2">
+                  Check Delivery Availability
+                </h3>
+
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value)}
+                    placeholder="Enter pincode"
+                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                    maxLength={6}
+                  />
+                  <button
+                    onClick={checkPincode}
+                    className=" text-white bg-indigo-500 px-4 rounded hover:bg-indigo-600"
+                  >
+                    Check
+                  </button>
+                </div>
+
+                {message && (
+                  <p
+                    className={`mt-2 text-sm ${
+                      message.includes("❌") ? "text-red-600" : "text-green-600"
+                    }`}
+                  >
+                    {message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
