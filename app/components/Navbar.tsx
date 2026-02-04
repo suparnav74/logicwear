@@ -2,58 +2,69 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaCartShopping } from "react-icons/fa6";
-import { IoMdCloseCircle  } from "react-icons/io";
-import { FiPlusCircle,FiMinusCircle } from "react-icons/fi";
+import { IoMdCloseCircle } from "react-icons/io";
+import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getCart, clearCartStorage, saveCart } from "@/utils/cart";
 
 const Navbar = () => {
   const [openCart, setOpenCart] = useState(false);
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Wear The Code",
-      price: 400,
-      qty: 1,
-      image: "/tshirt.webp",
-    },
-  ]);
+  // const [cartItems, setCartItems] = useState([
+  //   {
+  //     variantId: "12345",
+  //     id: 1,
+  //     name: "Wear The Code",
+  //     price: 400,
+  //     image: "/tshirt.webp",
+  //     size: "M",
+  //     color: "Black",
+  //     qty: 1,
+  //   },
+  // ]);
+  const [cartItems, setCartItems] = useState([...getCart()]);
   // Increase quantity
-  const increaseQty = (id:number) => {
+  const increaseQty = (id: number) => {
     setCartItems((items) =>
       items.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item
-      )
+        item.id === id ? { ...item, qty: item.qty + 1 } : item,
+      ),
     );
   };
 
   // Decrease quantity (min 1)
-  const decreaseQty = (id:number) => {
+  const decreaseQty = (id: number) => {
     setCartItems((items) =>
       items.map((item) =>
-        item.id === id && item.qty > 1
-          ? { ...item, qty: item.qty - 1 }
-          : item
-      )
+        item.id === id && item.qty > 1 ? { ...item, qty: item.qty - 1 } : item,
+      ),
     );
   };
   // Remove item
-  const removeItem = (id:number) => {
+  const removeItem = (id: number) => {
     setCartItems((items) => items.filter((item) => item.id !== id));
   };
 
+  const clearCart = () => {
+  clearCartStorage();
+  setCartItems([]);
+};
   // Subtotal
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.qty,
-    0
+    0,
   );
+  useEffect(() => {
+    saveCart(cartItems);
+  }, [cartItems]);
+
   return (
     <>
       {/* Navbar */}
-      <header className="body-font bg-gray-950 shadow-md">
+      <header className="body-font bg-gray-950 shadow-md sticky top-0 z-30">
         <div className="mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center">
           <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <Image src="/logo.png" alt="logo" width={150} height={80} />
+            <Image src="/logo.png" loading="eager" alt="logo" width={150} height={80} />
           </a>
           <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
             <Link
@@ -82,7 +93,10 @@ const Navbar = () => {
             </Link>
           </nav>
           <button
-            onClick={() => setOpenCart(true)}
+            onClick={() => {
+              setCartItems(getCart());
+              setOpenCart(true);
+            }}
             className="inline-flex items-center text-amber-50 text-2xl border-0 py-1 px-3 focus:outline-none hover:text-gray-300 rounded mt-4 md:mt-0"
           >
             <FaCartShopping />
@@ -105,7 +119,10 @@ const Navbar = () => {
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-lg font-semibold text-black">Your Cart</h2>
-          <button onClick={() => setOpenCart(false)} className="text-2xl text-black">
+          <button
+            onClick={() => setOpenCart(false)}
+            className="text-2xl text-black"
+          >
             <IoMdCloseCircle />
           </button>
         </div>
@@ -135,21 +152,22 @@ const Navbar = () => {
               <div className="flex-1  text-black">
                 <h3 className="font-medium">{item.name}</h3>
                 <p className="text-sm text-gray-600">₹{item.price}</p>
-
+                <p className="text-sm text-gray-600">Color : {item.color}</p>
+                <p className="text-sm text-gray-600">Size : {item.size}</p>
                 {/* Quantity Controls */}
                 <div className="flex items-center gap-2 mt-2">
                   <button
                     onClick={() => decreaseQty(item.id)}
                     className="px-2 py-1 text-xl"
                   >
-                   <FiMinusCircle/>
+                    <FiMinusCircle />
                   </button>
                   <span>{item.qty}</span>
                   <button
                     onClick={() => increaseQty(item.id)}
                     className="px-2 py-1 text-xl"
                   >
-                  <FiPlusCircle/>
+                    <FiPlusCircle />
                   </button>
                 </div>
 
@@ -158,7 +176,7 @@ const Navbar = () => {
                   onClick={() => removeItem(item.id)}
                   className="text-xl text-red-500 mt-2 mx-2"
                 >
-                  <MdDelete/>
+                  <MdDelete />
                 </button>
               </div>
             </div>
@@ -168,13 +186,21 @@ const Navbar = () => {
         {/* Footer */}
         <div className="absolute bottom-0 w-full p-4 border-t">
           <p className="font-semibold mb-3 text-black">Subtotal: ₹{subtotal}</p>
-          <Link
-            href="/checkout"
-            onClick={() => setOpenCart(false)}
-            className="block text-center bg-gray-900 text-white py-2 rounded hover:bg-gray-800"
-          >
-            Checkout
-          </Link>
+          <div className="flex  p-1 gap-4 justify-normal items-center">
+            <Link
+              href="/checkout"
+              onClick={() => setOpenCart(false)}
+              className="block text-center bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800"
+            >
+              Checkout
+            </Link>
+            <button
+              onClick={() => clearCart()}
+              className="block text-center bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800"
+            >
+              Clear Cart
+            </button>
+          </div>
         </div>
       </div>
     </>

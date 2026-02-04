@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { getCart, saveCart } from "@/utils/cart";
 
 const Product = () => {
   const [pincode, setPincode] = useState("");
@@ -15,6 +16,39 @@ const Product = () => {
     // Dummy logic (replace with API later)
     setMessage("✅ Delivery available in your area");
   };
+  const addToCart = () => {
+  let cart = getCart();
+  
+  const variantId:string = "12345";
+
+  const existingItem = cart.find(
+    (item) => item.variantId === variantId
+  );
+  console.log(existingItem);
+  console.log(cart);
+  if (existingItem) {
+    cart = cart.map((item) =>
+      item.variantId === variantId
+        ? { ...item, qty: item.qty + 1 }
+        : item
+    );
+  } else {
+    cart.push({
+      variantId,
+      id: 1,
+      name: "Wear The Code",
+      price: 400,
+      image: "/tshirt.webp",
+      size: "M",
+      color: "Black",
+      qty: 1,
+    });
+  }
+
+  saveCart(cart);
+  alert("✅ Product added to cart");
+};
+
   return (
     <>
       <section className="text-gray-600 body-font overflow-hidden bg-white">
@@ -179,7 +213,7 @@ const Product = () => {
                 <button className="flex ml-7 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
                   Buy Now
                 </button>
-                <button className="flex ml-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
+                <button onClick={addToCart} className="flex ml-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
                   Add to Cart
                 </button>
                 <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
