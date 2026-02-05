@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMdCloseCircle } from "react-icons/io";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdAccountCircle } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { getCart, clearCartStorage, saveCart } from "@/utils/cart";
 
@@ -46,14 +46,15 @@ const Navbar = () => {
   };
 
   const clearCart = () => {
-  clearCartStorage();
-  setCartItems([]);
-};
+    clearCartStorage();
+    setCartItems([]);
+  };
   // Subtotal
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.qty,
     0,
   );
+
   useEffect(() => {
     saveCart(cartItems);
   }, [cartItems]);
@@ -61,43 +62,55 @@ const Navbar = () => {
   return (
     <>
       {/* Navbar */}
-      <header className="body-font bg-gray-950 shadow-md sticky top-0 z-30">
+      <header className="body-font bg-white shadow-md sticky top-0 z-30">
         <div className="mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center">
-          <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <Image src="/logo.png" loading="eager" alt="logo" width={150} height={80} />
-          </a>
+          <Link href={"/"} className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0 hover:scale-105 transition-transform">
+            <Image
+              src="/logo.png"
+              loading="eager"
+              alt="logo"
+              width={100}
+              height={50}
+            />
+          </Link>
           <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
             <Link
               href={"/tshirts"}
-              className="mr-5 hover:text-gray-400 text-amber-50"
+              className="mr-5 hover:text-blue-600 text-black"
             >
               Tshirts
             </Link>
             <Link
               href={"/hoodies"}
-              className="mr-5 hover:text-gray-400 text-amber-50"
+              className="mr-5 hover:text-blue-600 text-black"
             >
               Hoodies
             </Link>
             <Link
               href={"/mugs"}
-              className="mr-5 hover:text-gray-400 text-amber-50"
+              className="mr-5 hover:text-blue-600 text-black"
             >
               Mugs
             </Link>
             <Link
               href={"/stickers"}
-              className="mr-5 hover:text-gray-400 text-amber-50"
+              className="mr-5 hover:text-blue-600 text-black"
             >
               Stickers
             </Link>
           </nav>
+          <Link
+            href={"/login"}
+            className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-4 md:mt-0"
+          >
+            <MdAccountCircle />
+          </Link>
           <button
             onClick={() => {
               setCartItems(getCart());
               setOpenCart(true);
             }}
-            className="inline-flex items-center text-amber-50 text-2xl border-0 py-1 px-3 focus:outline-none hover:text-gray-300 rounded mt-4 md:mt-0"
+            className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-4 md:mt-0"
           >
             <FaCartShopping />
           </button>
@@ -121,7 +134,7 @@ const Navbar = () => {
           <h2 className="text-lg font-semibold text-black">Your Cart</h2>
           <button
             onClick={() => setOpenCart(false)}
-            className="text-2xl text-black"
+            className="text-2xl text-black hover:text-blue-600"
           >
             <IoMdCloseCircle />
           </button>
@@ -190,13 +203,13 @@ const Navbar = () => {
             <Link
               href="/checkout"
               onClick={() => setOpenCart(false)}
-              className="block text-center bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800"
+              className="block text-center bg-gray-900 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               Checkout
             </Link>
             <button
               onClick={() => clearCart()}
-              className="block text-center bg-gray-900 text-white px-4 py-2 rounded hover:bg-gray-800"
+              className="block text-center bg-gray-900 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               Clear Cart
             </button>
