@@ -1,0 +1,15 @@
+import { Product } from "@/types/product";
+
+export const fetchProducts = async (): Promise<Product[]> => {
+  try {
+    const res = await fetch("/api/products", {
+      cache: "no-store",
+    });
+
+    const data = await res.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
+};
