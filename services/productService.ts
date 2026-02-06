@@ -13,3 +13,10 @@ export const fetchProducts = async (): Promise<Product[]> => {
     return [];
   }
 };
+
+export const fetchProductBySlug = async (slug: string) => {
+  const res = await fetch(`/api/products/${slug}`);
+  const data = await res.json();
+  return data;
+}
+  

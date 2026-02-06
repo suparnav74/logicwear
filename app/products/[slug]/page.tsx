@@ -1,12 +1,29 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getCart, saveCart } from "@/utils/cart";
+import { useParams } from "next/navigation";
+import { Product } from "@/types/product";
+import { fetchProductBySlug } from "@/services/productService";
 
-const Product = () => {
+const ProductDetails = () => {
   const [pincode, setPincode] = useState("");
   const [message, setMessage] = useState("");
+  const [product, setProduct] = useState<Product | null>(null);
+  const params = useParams();
+  const slug = params.slug as string;
 
+  useEffect(() => {
+    console.log("Fetching product with slug:", slug);
+    const loadProduct = async () => {
+      const data = await fetchProductBySlug(slug);
+      setProduct(data);
+    };
+    if (slug) loadProduct();
+  }, [slug]);
+
+  if (!product) return <div className="p-10">Loading...</div>;
+  
   const checkPincode = () => {
     if (pincode.length !== 6) {
       setMessage("❌ Please enter a valid 6-digit pincode");
@@ -17,37 +34,33 @@ const Product = () => {
     setMessage("✅ Delivery available in your area");
   };
   const addToCart = () => {
-  let cart = getCart();
-  
-  const variantId:string = "12345";
+    let cart = getCart();
 
-  const existingItem = cart.find(
-    (item) => item.variantId === variantId
-  );
-  console.log(existingItem);
-  console.log(cart);
-  if (existingItem) {
-    cart = cart.map((item) =>
-      item.variantId === variantId
-        ? { ...item, qty: item.qty + 1 }
-        : item
-    );
-  } else {
-    cart.push({
-      variantId,
-      id: 1,
-      name: "Wear The Code",
-      price: 400,
-      image: "/tshirt.webp",
-      size: "M",
-      color: "Black",
-      qty: 1,
-    });
-  }
+    const variantId: string = "12345";
 
-  saveCart(cart);
-  alert("✅ Product added to cart");
-};
+    const existingItem = cart.find((item) => item.variantId === variantId);
+    console.log(existingItem);
+    console.log(cart);
+    if (existingItem) {
+      cart = cart.map((item) =>
+        item.variantId === variantId ? { ...item, qty: item.qty + 1 } : item,
+      );
+    } else {
+      cart.push({
+        variantId,
+        id: 1,
+        name: "Wear The Code",
+        price: 400,
+        image: "/tshirt.webp",
+        size: "M",
+        color: "Black",
+        qty: 1,
+      });
+    }
+
+    saveCart(cart);
+    alert("✅ Product added to cart");
+  };
 
   return (
     <>
@@ -63,10 +76,10 @@ const Product = () => {
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
               <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                BRAND NAME
+                {product.category.toUpperCase()}
               </h2>
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                The Catcher in the Rye
+                {product.title}
               </h1>
               <div className="flex mb-4">
                 <span className="flex items-center">
@@ -166,7 +179,8 @@ const Product = () => {
                   </a>
                 </span>
               </div>
-              <p className="leading-relaxed">
+              <p className="leading-relaxed">{product.desc}</p>
+              <p className="leading-relaxed mt-1">
                 Fam locavore kickstarter distillery. Mixtape chillwave tumeric
                 sriracha taximy chia microdosing tilde DIY. XOXO fam indxgo
                 juiceramps cornhole raw denim forage brooklyn. Everyday carry +1
@@ -177,13 +191,23 @@ const Product = () => {
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                 <div className="flex">
                   <span className="mr-3">Color</span>
-                  <button className="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"></button>
+                  {product.variants.map((variant) => (
+                    <div key={variant.sku}>
+                      <button
+                        className="border-2 border-gray-300 ml-1 rounded-full w-6 h-6 focus:outline-none"
+                        style={{
+                          backgroundColor: variant.color.toLowerCase(),
+                        }}
+                      ></button>
+                    </div>
+                  ))}
+                  {/* <button className="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"></button>
                   <button className="border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none"></button>
-                  <button className="border-2 border-gray-300 ml-1 bg-indigo-500 rounded-full w-6 h-6 focus:outline-none"></button>
+                  <button className="border-2 border-gray-300 ml-1 bg-indigo-500 rounded-full w-6 h-6 focus:outline-none"></button> */}
                 </div>
                 <div className="flex ml-6 items-center">
                   <span className="mr-3">Size</span>
-                  <div className="relative">
+                  {/* <div className="relative">
                     <select className="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
                       <option>SM</option>
                       <option>M</option>
@@ -203,6 +227,16 @@ const Product = () => {
                         <path d="M6 9l6 6 6-6"></path>
                       </svg>
                     </span>
+                  </div> */}
+                  <div className="flex flex-wrap gap-2">
+                    {product.variants.map((variant) => (
+                      <div
+                        key={variant.sku}
+                        className="flex items-center gap-2 border px-2 py-1 rounded"
+                      >
+                        <span className="text-xs">{variant.size}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -213,7 +247,10 @@ const Product = () => {
                 <button className="flex ml-7 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
                   Buy Now
                 </button>
-                <button onClick={addToCart} className="flex ml-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
+                <button
+                  onClick={addToCart}
+                  className="flex ml-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+                >
                   Add to Cart
                 </button>
                 <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
@@ -269,4 +306,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default ProductDetails;
