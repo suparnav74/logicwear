@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { getCart } from "@/utils/cart";
+import { getCart, saveCart } from "@/utils/cart";
 import Link from "next/link";
 
 const Checkout = () => {
@@ -11,36 +11,66 @@ const Checkout = () => {
 
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.qty,
-    0
+    0,
   );
 
   const shipping = subtotal > 999 ? 0 : 49;
   const total = subtotal + shipping;
 
+  const updateQuantity = (variantId: string, type: "inc" | "dec") => {
+  const updatedCart = cartItems.map((item) => {
+    if (item.variantId === variantId) {
+      const newQty = type === "inc" ? item.qty + 1 : item.qty - 1;
+      return { ...item, qty: newQty < 1 ? 1 : newQty };
+    }
+    return item;
+  });
+
+  setCartItems(updatedCart);
+  saveCart(updatedCart); 
+};
+
   return (
     <section className="bg-gray-100 min-h-screen py-10">
       <div className="container mx-auto px-5 max-w-7xl">
-        <h1 className="text-3xl font-semibold mb-8 text-black">
-          Checkout
-        </h1>
+        <h1 className="text-3xl font-semibold mb-8 text-black">Checkout</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* LEFT */}
           <div className="lg:col-span-2 space-y-6">
             {/* Address */}
             <div className="bg-white p-6 rounded shadow text-black">
-              <h2 className="text-lg font-semibold mb-4 ">
-                Delivery Address
-              </h2>
+              <h2 className="text-lg font-semibold mb-4 ">Delivery Address</h2>
 
               <div className="grid md:grid-cols-2 gap-4">
-                <input className="input border px-1 py-1 border-gray-400 rounded" placeholder="Full Name" />
-                <input className="input border px-1 py-1 border-gray-400 rounded" placeholder="Mobile Number" />
-                <input className="input border px-1 py-1 border-gray-400 rounded" placeholder="Email" />
-                <input className="input border px-1 py-1 border-gray-400 rounded" placeholder="Pincode" />
-                <input className="input md:col-span-2 border px-1 py-1 border-gray-400 rounded" placeholder="Address" />
-                <input className="input border px-1 py-1 border-gray-400 rounded" placeholder="City" />
-                <input className="input border px-1 py-1 border-gray-400 rounded" placeholder="State" />
+                <input
+                  className="input border px-1 py-1 border-gray-400 rounded"
+                  placeholder="Full Name"
+                />
+                <input
+                  className="input border px-1 py-1 border-gray-400 rounded"
+                  placeholder="Mobile Number"
+                />
+                <input
+                  className="input border px-1 py-1 border-gray-400 rounded"
+                  placeholder="Email"
+                />
+                <input
+                  className="input border px-1 py-1 border-gray-400 rounded"
+                  placeholder="Pincode"
+                />
+                <input
+                  className="input md:col-span-2 border px-1 py-1 border-gray-400 rounded"
+                  placeholder="Address"
+                />
+                <input
+                  className="input border px-1 py-1 border-gray-400 rounded"
+                  placeholder="City"
+                />
+                <input
+                  className="input border px-1 py-1 border-gray-400 rounded"
+                  placeholder="State"
+                />
               </div>
             </div>
 
@@ -93,9 +123,25 @@ const Checkout = () => {
                     <p className="text-sm text-gray-600">
                       {item.color} / {item.size}
                     </p>
-                    <p className="text-sm">
-                      ₹{item.price} × {item.qty}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <button
+                        onClick={() => updateQuantity(item.variantId, "dec")}
+                        className="px-2 py-1 border rounded"
+                      >
+                        -
+                      </button>
+
+                      <span>{item.qty}</span>
+
+                      <button
+                        onClick={() => updateQuantity(item.variantId, "inc")}
+                        className="px-2 py-1 border rounded"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <p className="text-sm mt-1">₹{item.price * item.qty}</p>
                   </div>
                 </div>
               ))}
@@ -116,9 +162,9 @@ const Checkout = () => {
               </div>
             </div>
             <Link href="/order">
-            <button className="w-full mt-6 bg-gray-900 text-white py-3 rounded hover:bg-gray-800">
-              Place Order
-            </button>
+              <button className="w-full mt-6 bg-gray-900 text-white py-3 rounded hover:bg-gray-800">
+                Place Order
+              </button>
             </Link>
           </div>
         </div>
@@ -128,4 +174,3 @@ const Checkout = () => {
 };
 
 export default Checkout;
-

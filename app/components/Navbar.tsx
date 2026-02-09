@@ -24,7 +24,7 @@ const Navbar = () => {
   // ]);
   const [cartItems, setCartItems] = useState([...getCart()]);
   // Increase quantity
-  const increaseQty = (id: number) => {
+  const increaseQty = (id: string) => {
     setCartItems((items) =>
       items.map((item) =>
         item.id === id ? { ...item, qty: item.qty + 1 } : item,
@@ -33,7 +33,7 @@ const Navbar = () => {
   };
 
   // Decrease quantity (min 1)
-  const decreaseQty = (id: number) => {
+  const decreaseQty = (id: string) => {
     setCartItems((items) =>
       items.map((item) =>
         item.id === id && item.qty > 1 ? { ...item, qty: item.qty - 1 } : item,
@@ -41,7 +41,7 @@ const Navbar = () => {
     );
   };
   // Remove item
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     setCartItems((items) => items.filter((item) => item.id !== id));
   };
 
@@ -64,7 +64,10 @@ const Navbar = () => {
       {/* Navbar */}
       <header className="body-font bg-white shadow-md sticky top-0 z-30">
         <div className="mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center">
-          <Link href={"/"} className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0 hover:scale-105 transition-transform">
+          <Link
+            href={"/"}
+            className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0 hover:scale-105 transition-transform"
+          >
             <Image
               src="/logo.png"
               loading="eager"
@@ -73,7 +76,7 @@ const Navbar = () => {
               height={50}
             />
           </Link>
-          <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
+          <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base  font-bold justify-center">
             <Link
               href={"/tshirts"}
               className="mr-5 hover:text-blue-600 text-black"
@@ -158,8 +161,11 @@ const Navbar = () => {
             <p className="text-center text-gray-500">Your cart is empty</p>
           )}
 
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex gap-6 border-b pb-4">
+          {cartItems.map((item, index) => (
+            <div
+              key={`${item.id}-${index}`}
+              className="flex gap-6 border-b pb-4"
+            >
               <Image src={item.image} alt={item.name} width={60} height={80} />
 
               <div className="flex-1  text-black">

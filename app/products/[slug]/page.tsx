@@ -2,15 +2,18 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { getCart, saveCart } from "@/utils/cart";
-import { useParams } from "next/navigation";
-import { Product } from "@/types/product";
+import { useParams, useRouter } from "next/navigation";
+import { Product, Variant } from "@/types/product";
 import { fetchProductBySlug } from "@/services/productService";
+import { ToastContainer, toast } from 'react-toastify';
 
 const ProductDetails = () => {
   const [pincode, setPincode] = useState("");
   const [message, setMessage] = useState("");
   const [product, setProduct] = useState<Product | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const params = useParams();
+  const router = useRouter();
   const slug = params.slug as string;
 
   useEffect(() => {
@@ -18,48 +21,76 @@ const ProductDetails = () => {
     const loadProduct = async () => {
       const data = await fetchProductBySlug(slug);
       setProduct(data);
+      if (data?.variants?.length > 0) {
+        setSelectedVariant(data.variants[0]);
+      }
     };
     if (slug) loadProduct();
   }, [slug]);
 
-  if (!product) return <div className="p-10">Loading...</div>;
-  
+  if (!product)
+  return (
+    <div className="flex justify-center items-center h-[60vh]">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+    </div>
+  );
+
   const checkPincode = () => {
     if (pincode.length !== 6) {
       setMessage("❌ Please enter a valid 6-digit pincode");
+      toast.error("Please enter a valid 6-digit pincode");
       return;
     }
 
     // Dummy logic (replace with API later)
     setMessage("✅ Delivery available in your area");
+    toast.success("Delivery available in your area");
   };
-  const addToCart = () => {
+
+  const addToCart = (product: Product, variant: Variant) => {
     let cart = getCart();
 
-    const variantId: string = "12345";
+    const existingItem = cart.find((item) => item.variantId === variant.sku);
 
-    const existingItem = cart.find((item) => item.variantId === variantId);
-    console.log(existingItem);
-    console.log(cart);
     if (existingItem) {
       cart = cart.map((item) =>
-        item.variantId === variantId ? { ...item, qty: item.qty + 1 } : item,
+        item.variantId === variant.sku ? { ...item, qty: item.qty + 1 } : item,
       );
     } else {
       cart.push({
-        variantId,
-        id: 1,
-        name: "Wear The Code",
-        price: 400,
+        variantId: variant.sku,
+        id: product._id,
+        name: product.title,
+        price: variant.price,
         image: "/tshirt.webp",
-        size: "M",
-        color: "Black",
+        size: variant.size,
+        color: variant.color,
         qty: 1,
       });
     }
 
     saveCart(cart);
     alert("✅ Product added to cart");
+  };
+
+  const handleBuyNow = () => {
+    if (!product || !selectedVariant) return;
+
+    const cart = [
+      {
+        variantId: selectedVariant.sku,
+        id: product._id,
+        name: product.title,
+        price: selectedVariant.price,
+        image: product.image,
+        size: selectedVariant.size,
+        color: selectedVariant.color,
+        qty: 1,
+      },
+    ];
+
+    saveCart(cart);
+    router.push("/checkout");
   };
 
   return (
@@ -70,7 +101,8 @@ const ProductDetails = () => {
             <Image
               alt="ecommerce"
               className="lg:w-1/2 w-full lg:h-auto  object-cover object-center rounded"
-              src="/sticker.jpg"
+              // src="/sticker.jpg"
+              src={product.image}
               width={400}
               height={400}
             />
@@ -80,8 +112,10 @@ const ProductDetails = () => {
               </h2>
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
                 {product.title}
+                {selectedVariant &&
+                  ` ( ${selectedVariant.color} / ${selectedVariant.size} )`}
               </h1>
-              <div className="flex mb-4">
+              {/* <div className="flex mb-4">
                 <span className="flex items-center">
                   <svg
                     fill="currentColor"
@@ -178,28 +212,20 @@ const ProductDetails = () => {
                     </svg>
                   </a>
                 </span>
-              </div>
+              </div> */}
               <p className="leading-relaxed">{product.desc}</p>
-              <p className="leading-relaxed mt-1">
-                Fam locavore kickstarter distillery. Mixtape chillwave tumeric
-                sriracha taximy chia microdosing tilde DIY. XOXO fam indxgo
-                juiceramps cornhole raw denim forage brooklyn. Everyday carry +1
-                seitan poutine tumeric. Gastropub blue bottle austin listicle
-                pour-over, neutra jean shorts keytar banjo tattooed umami
-                cardigan.
-              </p>
               <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                 <div className="flex">
                   <span className="mr-3">Color</span>
                   {product.variants.map((variant) => (
-                    <div key={variant.sku}>
-                      <button
-                        className="border-2 border-gray-300 ml-1 rounded-full w-6 h-6 focus:outline-none"
-                        style={{
-                          backgroundColor: variant.color.toLowerCase(),
-                        }}
-                      ></button>
-                    </div>
+                    <button
+                      key={variant.sku}
+                      onClick={() => setSelectedVariant(variant)}
+                      className={`border-2 ml-1 rounded-full w-6 h-6 
+                        ${selectedVariant?.sku === variant.sku ? "border-black scale-110" : "border-gray-300"}
+                      `}
+                      style={{ backgroundColor: variant.color.toLowerCase() }}
+                    ></button>
                   ))}
                   {/* <button className="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"></button>
                   <button className="border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none"></button>
@@ -230,30 +256,43 @@ const ProductDetails = () => {
                   </div> */}
                   <div className="flex flex-wrap gap-2">
                     {product.variants.map((variant) => (
-                      <div
+                      <button
                         key={variant.sku}
-                        className="flex items-center gap-2 border px-2 py-1 rounded"
+                        onClick={() => setSelectedVariant(variant)}
+                        className={`px-3 py-1 border rounded text-sm
+                        ${
+                          selectedVariant?.sku === variant.sku
+                            ? "bg-black text-white"
+                            : "bg-white"
+                        }
+                      `}
                       >
-                        <span className="text-xs">{variant.size}</span>
-                      </div>
+                        {variant.size}
+                      </button>
                     ))}
                   </div>
                 </div>
               </div>
               <div className="flex">
                 <span className="title-font font-medium text-2xl text-gray-900">
-                  ₹499
+                  ₹{selectedVariant?.price}
                 </span>
-                <button className="flex ml-7 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
+                <button
+                  onClick={handleBuyNow}
+                  className="flex ml-7 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+                >
                   Buy Now
                 </button>
                 <button
-                  onClick={addToCart}
+                  onClick={() => {
+                    if (!selectedVariant) return;
+                    addToCart(product, selectedVariant);
+                  }}
                   className="flex ml-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
                 >
                   Add to Cart
                 </button>
-                <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
+                {/* <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
                   <svg
                     fill="currentColor"
                     strokeLinecap="round"
@@ -264,7 +303,7 @@ const ProductDetails = () => {
                   >
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                   </svg>
-                </button>
+                </button> */}
               </div>
               <div className="mt-6 p-2 bg-gray-50">
                 <h3 className="font-medium text-gray-900 mb-2">
@@ -277,7 +316,7 @@ const ProductDetails = () => {
                     value={pincode}
                     onChange={(e) => setPincode(e.target.value)}
                     placeholder="Enter pincode"
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                    className="w-auto border rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-900"
                     maxLength={6}
                   />
                   <button
@@ -285,6 +324,7 @@ const ProductDetails = () => {
                     className=" text-white bg-indigo-500 px-4 rounded hover:bg-indigo-600"
                   >
                     Check
+                    <ToastContainer />
                   </button>
                 </div>
 

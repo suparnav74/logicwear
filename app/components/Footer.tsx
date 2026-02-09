@@ -12,14 +12,41 @@ const Footer = () => {
                 alt="logo" width={500}height={200}/>
               {/* <span className="ml-3 text-xl">Logic Wear</span> */}
             </a>
-            <p className="mt-2 text-sm text-black">
+            <p className="mt-2 text-sm text-black text-center">
               Where Logic Meets Style
             </p>
           </div>
           <div className="grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
             <div className="lg:w-1/4 md:w-1/2 w-full px-4">
               <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
-                CATEGORIES
+                SHOP
+              </h2>
+              <nav className="list-none mb-10">
+                <li>
+                  <a className="text-gray-600 hover:text-gray-800">
+                    T-shirts
+                  </a>
+                </li>
+                <li>
+                  <a className="text-gray-600 hover:text-gray-800">
+                    Hoddies
+                  </a>
+                </li>
+                <li>
+                  <a className="text-gray-600 hover:text-gray-800">
+                    Stickers
+                  </a>
+                </li>
+                <li>
+                  <a className="text-gray-600 hover:text-gray-800">
+                    Mugs
+                  </a>
+                </li>
+              </nav>
+            </div>
+            <div className="lg:w-1/4 md:w-1/2 w-full px-4">
+              <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
+                ABOUT
               </h2>
               <nav className="list-none mb-10">
                 <li>
@@ -46,7 +73,7 @@ const Footer = () => {
             </div>
             <div className="lg:w-1/4 md:w-1/2 w-full px-4">
               <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
-                CATEGORIES
+                CONTACT
               </h2>
               <nav className="list-none mb-10">
                 <li>
@@ -73,34 +100,7 @@ const Footer = () => {
             </div>
             <div className="lg:w-1/4 md:w-1/2 w-full px-4">
               <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
-                CATEGORIES
-              </h2>
-              <nav className="list-none mb-10">
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    First Link
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Second Link
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Third Link
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Fourth Link
-                  </a>
-                </li>
-              </nav>
-            </div>
-            <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-              <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
-                CATEGORIES
+                POLICY
               </h2>
               <nav className="list-none mb-10">
                 <li>
@@ -130,7 +130,7 @@ const Footer = () => {
         <div className="bg-blue-100">
           <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
             <p className="text-black0 text-sm text-center sm:text-left">
-              © 2026 LogicWear —
+              © 2025 LogicWear —
               <a
                 href="https://twitter.com/knyttneve"
                 rel="noopener noreferrer"
