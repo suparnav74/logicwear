@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 type AuthContextType = {
   isLoggedIn: boolean;
@@ -23,11 +24,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = (token: string) => {
     localStorage.setItem("token", token);
     setIsLoggedIn(true);
+    toast.success("Login successful!");
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
+    toast.success("Logged out successfully");
   };
 
   return (

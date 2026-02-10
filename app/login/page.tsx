@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -8,13 +8,19 @@ import { useAuth } from "@/context/AuthContext";
 const Login = () => {
   const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login } = useAuth();
+    const { login,isLoggedIn } = useAuth();
     const router = useRouter();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === "email") setEmail(value);
     if (name === "password") setPassword(value);
   };
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, [isLoggedIn, router]);
+  
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -25,8 +31,6 @@ const Login = () => {
       });
       const data = await response.json();
       if (response.status === 200) {
-        localStorage.setItem("token", data.token);
-        toast.success("Login successful!");
         login(data.token); 
         router.push("/");
 
