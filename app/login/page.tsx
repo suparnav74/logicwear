@@ -1,11 +1,43 @@
+"use client";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const router = useRouter();
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "email") setEmail(value);
+    if (name === "password") setPassword(value);
+  };
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.status === 200) {
+        localStorage.setItem("token", data.token);
+        toast.success("Login successful!");
+        router.push("/");
+
+      }
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+      console.error("Error during login:", error);
+    }
+  };
   return (
     <>
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-gray-50">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="max-w-96 w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white">
+          <form onSubmit={handleSubmit} className="max-w-96 w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white">
             <h1 className="text-gray-900 text-3xl mt-10 font-medium">Login</h1>
             <p className="text-gray-500 text-sm mt-2">
               Please sign in to continue
@@ -27,6 +59,9 @@ const Login = () => {
               </svg>
               <input
                 type="email"
+                name="email"
+                value={email}
+                onChange={handleChange}
                 placeholder="Email id"
                 className="bg-transparent text-gray-500 placeholder-gray-500 outline-none text-sm w-full h-full"
                 required
@@ -49,6 +84,9 @@ const Login = () => {
               <input
                 type="password"
                 placeholder="Password"
+                name="password"
+                value={password}
+                onChange={handleChange}
                 className="bg-transparent text-gray-500 placeholder-gray-500 outline-none text-sm w-full h-full"
                 required
               />

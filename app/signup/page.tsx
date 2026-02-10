@@ -1,11 +1,46 @@
+"use client";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 const Signup = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "name") setName(value);
+    if (name === "email") setEmail(value);
+    if (name === "password") setPassword(value);
+  };
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (response.status === 200) {
+        setName("");
+        setEmail("");
+        setPassword("");
+        toast.success("Signup successful! Please log in.");
+      }
+    } catch (error) {
+      toast.error("Signup failed. Please try again.");
+      console.error("Error during signup:", error);
+    }
+  };
   return (
     <>
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-gray-50">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="max-w-96 w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white">
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-96 w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white"
+          >
             <h1 className="text-gray-900 text-3xl mt-10 font-medium">
               Sign Up
             </h1>
@@ -28,7 +63,10 @@ const Signup = () => {
               </svg>
               <input
                 className="bg-transparent text-gray-500 placeholder-gray-500 outline-none text-sm w-full h-full"
-                type="text"
+                type="name"
+                name="name"
+                value={name}
+                onChange={handleChange}
                 placeholder="Username"
                 required
               />
@@ -60,6 +98,9 @@ const Signup = () => {
               <input
                 className="bg-transparent text-gray-500 placeholder-gray-500 outline-none text-sm w-full h-full"
                 type="email"
+                name="email"
+                value={email}
+                onChange={handleChange}
                 placeholder="Email"
                 required
               />
@@ -91,6 +132,9 @@ const Signup = () => {
               <input
                 className="bg-transparent text-gray-500 placeholder-gray-500 outline-none text-sm w-full h-full"
                 type="password"
+                name="password"
+                value={password}
+                onChange={handleChange}
                 placeholder="Password"
                 required
               />
