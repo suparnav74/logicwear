@@ -7,22 +7,16 @@ import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
 import { MdDelete, MdAccountCircle } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { getCart, clearCartStorage, saveCart } from "@/utils/cart";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const [openCart, setOpenCart] = useState(false);
-  // const [cartItems, setCartItems] = useState([
-  //   {
-  //     variantId: "12345",
-  //     id: 1,
-  //     name: "Wear The Code",
-  //     price: 400,
-  //     image: "/tshirt.webp",
-  //     size: "M",
-  //     color: "Black",
-  //     qty: 1,
-  //   },
-  // ]);
   const [cartItems, setCartItems] = useState([...getCart()]);
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const { isLoggedIn, logout } = useAuth();
+  const Router = useRouter();
+
   // Increase quantity
   const increaseQty = (id: string) => {
     setCartItems((items) =>
@@ -32,7 +26,7 @@ const Navbar = () => {
     );
   };
 
-  // Decrease quantity (min 1)
+  // Decrease quantity
   const decreaseQty = (id: string) => {
     setCartItems((items) =>
       items.map((item) =>
@@ -58,6 +52,16 @@ const Navbar = () => {
   useEffect(() => {
     saveCart(cartItems);
   }, [cartItems]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOpenDropdown(false);
+  }, [isLoggedIn]);
+
+  const handleLogout = () => {
+    logout();
+    Router.push("/login");
+  };
 
   return (
     <>
@@ -102,12 +106,47 @@ const Navbar = () => {
               Stickers
             </Link>
           </nav>
-          <Link
-            href={"/login"}
-            className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-4 md:mt-0"
-          >
-            <MdAccountCircle />
-          </Link>
+          {isLoggedIn ? (
+            <div className="relative">
+              <button
+                onClick={() => setOpenDropdown(!openDropdown)}
+                className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-4 md:mt-0"
+              >
+                <MdAccountCircle />
+              </button>
+
+              {openDropdown && (
+                <div className="absolute right-0 mt-2 w-40 bg-blue-50 border-md text-black shadow-md rounded">
+                  <Link
+                    href="/account"
+                    className="block px-4 py-2 hover:bg-blue-200 rounded"
+                  >
+                    My Account
+                  </Link>
+                  <Link
+                    href="/orders"
+                    className="block px-4 py-2 hover:bg-blue-200 rounded"
+                  >
+                    Orders
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 hover:bg-blue-200 rounded"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="inline-flex items-center bg-gray-900 text-white px-3 py-1 rounded-md text-sm font-medium 
+             hover:bg-blue-600 transition-colors duration-200 mt-4 md:mt-0"
+            >
+              Login
+            </Link>
+          )}
           <button
             onClick={() => {
               setCartItems(getCart());

@@ -3,10 +3,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useAuth();
     const router = useRouter();
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,6 +27,7 @@ const Login = () => {
       if (response.status === 200) {
         localStorage.setItem("token", data.token);
         toast.success("Login successful!");
+        login(data.token); 
         router.push("/");
 
       }
