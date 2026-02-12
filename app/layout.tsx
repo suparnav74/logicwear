@@ -30,6 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <script
+        type="application/javascript"
+        src={`https://securegw-stage.paytm.in/merchantpgpui/checkoutjs/merchants/${process.env.PAYTM_MID}.js`}
+        async
+      />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

@@ -7,8 +7,14 @@ import Link from "next/link";
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([...getCart()]);
-  const [payment, setPayment] = useState("cod");
-
+  const [payment, setPayment] = useState("online");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [pincode, setPincode] = useState("");
+  
+ 
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.qty,
     0,
@@ -29,6 +35,42 @@ const Checkout = () => {
   setCartItems(updatedCart);
   saveCart(updatedCart); 
 };
+const handlePayment = async () => {
+  const res = await fetch("/api/paytm/create-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: "test@gmail.com",
+      amount: 499,
+    }),
+  });
+
+  const data = await res.json();
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action =
+    "https://securegw-stage.paytm.in/order/process";
+
+  Object.keys(data.paytmParams).forEach((key) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = data.paytmParams[key];
+    form.appendChild(input);
+  });
+
+  const checksumInput = document.createElement("input");
+  checksumInput.type = "hidden";
+  checksumInput.name = "CHECKSUMHASH";
+  checksumInput.value = data.checksum;
+  form.appendChild(checksumInput);
+
+  document.body.appendChild(form);
+  form.submit();
+};
+
+
 
   return (
     <section className="bg-gray-100 min-h-screen py-10">
@@ -46,30 +88,40 @@ const Checkout = () => {
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
                   placeholder="Full Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
                   placeholder="Mobile Number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
                   placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
                   placeholder="Pincode"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
                 />
                 <input
                   className="input md:col-span-2 border px-1 py-1 border-gray-400 rounded"
                   placeholder="Address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
-                  placeholder="City"
+                  placeholder="City" readOnly
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
-                  placeholder="State"
+                  placeholder="State" readOnly
                 />
               </div>
             </div>
@@ -161,11 +213,13 @@ const Checkout = () => {
                 <span>₹{total}</span>
               </div>
             </div>
-            <Link href="/order">
-              <button className="w-full mt-6 bg-gray-900 text-white py-3 rounded hover:bg-gray-800">
+            
+              <button onClick={handlePayment} className="w-full mt-6 bg-gray-900 text-white py-3 rounded hover:bg-gray-800">
                 Place Order
               </button>
-            </Link>
+              <Link href="/order" className="w-full mt-4 block text-center text-gray-700 hover:underline">
+                View My Orders
+              </Link>
           </div>
         </div>
       </div>

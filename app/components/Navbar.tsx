@@ -127,7 +127,7 @@ const Navbar = () => {
                     href="/orders"
                     className="block px-4 py-2 hover:bg-blue-200 rounded"
                   >
-                    Orders
+                    My Orders
                   </Link>
                   <button
                     onClick={handleLogout}

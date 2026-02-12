@@ -22,7 +22,7 @@ const OrderSchema = new Schema<IOrder>(
         size: String,
         color: String,
         price: Number,
-        availableQty: Number,
+        qty: Number,
       },
     ],
 
@@ -43,9 +43,13 @@ const OrderSchema = new Schema<IOrder>(
       enum: ["processing", "shipped", "delivered", "cancelled"],
       default: "processing",
     },
+    transactionId: { type: String },
+    orderId: { type: String },
   },
   { timestamps: true },
 );
 
 export default mongoose.models.Order ||
   mongoose.model<IOrder>("Order", OrderSchema);
+
+

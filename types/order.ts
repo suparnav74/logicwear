@@ -8,7 +8,7 @@ export interface IOrderItem {
   size: string;
   color: string;
   price: number;
-  availableQty: number;
+  qty: number;
 }
 
 export interface IOrder extends Document {
@@ -31,6 +31,8 @@ export interface IOrder extends Document {
   paymentStatus: "pending" | "paid" | "failed";
 
   orderStatus: "processing" | "shipped" | "delivered" | "cancelled";
+  transactionId?: string; // Paytm TXNID
+  orderId?: string; // Gateway Order ID
 
   createdAt: Date;
 }
