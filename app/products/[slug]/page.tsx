@@ -5,13 +5,13 @@ import { getCart, saveCart } from "@/utils/cart";
 import { useParams, useRouter } from "next/navigation";
 import { Product, Variant } from "@/types/product";
 import { fetchProductBySlug } from "@/services/productService";
-import { ToastContainer, toast } from 'react-toastify';
 
 const ProductDetails = () => {
   const [pincode, setPincode] = useState("");
   const [message, setMessage] = useState("");
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [loading, setLoading] = useState(false);
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
@@ -29,22 +29,37 @@ const ProductDetails = () => {
   }, [slug]);
 
   if (!product)
-  return (
-    <div className="flex justify-center items-center h-[60vh]">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-    </div>
-  );
-
-  const checkPincode = () => {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    );
+  const checkPincode = async () => {
     if (pincode.length !== 6) {
-      setMessage("❌ Please enter a valid 6-digit pincode");
-      toast.error("Please enter a valid 6-digit pincode");
+      setMessage("Enter valid 6 digit pincode");
       return;
     }
 
-    // Dummy logic (replace with API later)
-    setMessage("✅ Delivery available in your area");
-    toast.success("Delivery available in your area");
+    setLoading(true);
+    setMessage("");
+
+    const res = await fetch("/api/check-delivery", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pincode }),
+    });
+
+    const data = await res.json();
+
+    if (data.serviceable) {
+      setMessage("✅ Delivery available in your area");
+    } else {
+      setMessage("❌ Not deliverable to this location");
+    }
+
+    setLoading(false);
   };
 
   const addToCart = (product: Product, variant: Variant) => {
@@ -273,7 +288,40 @@ const ProductDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex">
+            
+              <div className="mt-2 p-2 bg-gray-50">
+                <h3 className="font-medium text-gray-900 mb-2">
+                  Check Delivery Availability
+                </h3>
+
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value)}
+                    placeholder="Enter pincode"
+                    className="w-auto border rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                    maxLength={6}
+                  />
+                  <button
+                    onClick={checkPincode}
+                    className=" text-white bg-indigo-500 px-4 rounded hover:bg-indigo-600"
+                  >
+                    Check
+                  </button>
+                </div>
+                {loading && <p className="text-sm mt-2">Checking...</p>}
+                {message && (
+                  <p
+                    className={`mt-2 text-sm ${
+                      message.includes("❌") ? "text-red-600" : "text-green-600"
+                    }`}
+                  >
+                    {message}
+                  </p>
+                )}
+              </div>
+                <div className="flex mt-6">
                 <span className="title-font font-medium text-2xl text-gray-900">
                   ₹{selectedVariant?.price}
                 </span>
@@ -304,39 +352,6 @@ const ProductDetails = () => {
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                   </svg>
                 </button> */}
-              </div>
-              <div className="mt-6 p-2 bg-gray-50">
-                <h3 className="font-medium text-gray-900 mb-2">
-                  Check Delivery Availability
-                </h3>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value)}
-                    placeholder="Enter pincode"
-                    className="w-auto border rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-900"
-                    maxLength={6}
-                  />
-                  <button
-                    onClick={checkPincode}
-                    className=" text-white bg-indigo-500 px-4 rounded hover:bg-indigo-600"
-                  >
-                    Check
-                    <ToastContainer />
-                  </button>
-                </div>
-
-                {message && (
-                  <p
-                    className={`mt-2 text-sm ${
-                      message.includes("❌") ? "text-red-600" : "text-green-600"
-                    }`}
-                  >
-                    {message}
-                  </p>
-                )}
               </div>
             </div>
           </div>

@@ -13,8 +13,37 @@ const Checkout = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
-  
- 
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handlePincodeChange = async (value: string) => {
+    setPincode(value);
+
+    if (value.length === 6) {
+      setLoading(true);
+
+      const res = await fetch("/api/pincode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pincode: value }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setCity(data.city);
+        setState(data.state);
+      } else {
+        setCity("");
+        setState("");
+      }
+
+      setLoading(false);
+    }
+  };
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.qty,
     0,
@@ -24,53 +53,50 @@ const Checkout = () => {
   const total = subtotal + shipping;
 
   const updateQuantity = (variantId: string, type: "inc" | "dec") => {
-  const updatedCart = cartItems.map((item) => {
-    if (item.variantId === variantId) {
-      const newQty = type === "inc" ? item.qty + 1 : item.qty - 1;
-      return { ...item, qty: newQty < 1 ? 1 : newQty };
-    }
-    return item;
-  });
+    const updatedCart = cartItems.map((item) => {
+      if (item.variantId === variantId) {
+        const newQty = type === "inc" ? item.qty + 1 : item.qty - 1;
+        return { ...item, qty: newQty < 1 ? 1 : newQty };
+      }
+      return item;
+    });
 
-  setCartItems(updatedCart);
-  saveCart(updatedCart); 
-};
-const handlePayment = async () => {
-  const res = await fetch("/api/paytm/create-order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: "test@gmail.com",
-      amount: 499,
-    }),
-  });
+    setCartItems(updatedCart);
+    saveCart(updatedCart);
+  };
+  const handlePayment = async () => {
+    const res = await fetch("/api/paytm/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: "test@gmail.com",
+        amount: 499,
+      }),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action =
-    "https://securegw-stage.paytm.in/order/process";
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "https://securegw-stage.paytm.in/order/process";
 
-  Object.keys(data.paytmParams).forEach((key) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = data.paytmParams[key];
-    form.appendChild(input);
-  });
+    Object.keys(data.paytmParams).forEach((key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = data.paytmParams[key];
+      form.appendChild(input);
+    });
 
-  const checksumInput = document.createElement("input");
-  checksumInput.type = "hidden";
-  checksumInput.name = "CHECKSUMHASH";
-  checksumInput.value = data.checksum;
-  form.appendChild(checksumInput);
+    const checksumInput = document.createElement("input");
+    checksumInput.type = "hidden";
+    checksumInput.name = "CHECKSUMHASH";
+    checksumInput.value = data.checksum;
+    form.appendChild(checksumInput);
 
-  document.body.appendChild(form);
-  form.submit();
-};
-
-
+    document.body.appendChild(form);
+    form.submit();
+  };
 
   return (
     <section className="bg-gray-100 min-h-screen py-10">
@@ -107,7 +133,7 @@ const handlePayment = async () => {
                   className="input border px-1 py-1 border-gray-400 rounded"
                   placeholder="Pincode"
                   value={pincode}
-                  onChange={(e) => setPincode(e.target.value)}
+                  onChange={(e) => handlePincodeChange(e.target.value)}
                 />
                 <input
                   className="input md:col-span-2 border px-1 py-1 border-gray-400 rounded"
@@ -117,12 +143,19 @@ const handlePayment = async () => {
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
-                  placeholder="City" readOnly
+                  placeholder="City"
+                  value={city}
+                  readOnly
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
-                  placeholder="State" readOnly
+                  placeholder="State"
+                  value={state}
+                  readOnly
                 />
+                {loading && (
+                  <p className="text-sm text-gray-500">Fetching location...</p>
+                )}
               </div>
             </div>
 
@@ -213,13 +246,19 @@ const handlePayment = async () => {
                 <span>₹{total}</span>
               </div>
             </div>
-            
-              <button onClick={handlePayment} className="w-full mt-6 bg-gray-900 text-white py-3 rounded hover:bg-gray-800">
-                Place Order
-              </button>
-              <Link href="/order" className="w-full mt-4 block text-center text-gray-700 hover:underline">
-                View My Orders
-              </Link>
+
+            <button
+              onClick={handlePayment}
+              className="w-full mt-6 bg-gray-900 text-white py-3 rounded hover:bg-gray-800"
+            >
+              Place Order
+            </button>
+            <Link
+              href="/order"
+              className="w-full mt-4 block text-center text-gray-700 hover:underline"
+            >
+              View My Orders
+            </Link>
           </div>
         </div>
       </div>
