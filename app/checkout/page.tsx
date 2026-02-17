@@ -2,20 +2,25 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { getCart, saveCart } from "@/utils/cart";
-import Link from "next/link";
+import { getCart, saveCart,clearCartStorage } from "@/utils/cart";
+// import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getUserFromToken } from "@/utils/getUser";
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([...getCart()]);
   const [payment, setPayment] = useState("online");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const user = getUserFromToken();
+    const email = user?.email;
 
   const handlePincodeChange = async (value: string) => {
     setPincode(value);
@@ -64,39 +69,78 @@ const Checkout = () => {
     setCartItems(updatedCart);
     saveCart(updatedCart);
   };
+  //For Paytm
+  // const handlePayment = async () => {
+  //   const res = await fetch("/api/paytm/create-order", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       email: "test@gmail.com",
+  //       amount: 499,
+  //     }),
+  //   });
+
+  //   const data = await res.json();
+
+  //   const form = document.createElement("form");
+  //   form.method = "POST";
+  //   form.action = "https://securegw-stage.paytm.in/order/process";
+
+  //   Object.keys(data.paytmParams).forEach((key) => {
+  //     const input = document.createElement("input");
+  //     input.type = "hidden";
+  //     input.name = key;
+  //     input.value = data.paytmParams[key];
+  //     form.appendChild(input);
+  //   });
+
+  //   const checksumInput = document.createElement("input");
+  //   checksumInput.type = "hidden";
+  //   checksumInput.name = "CHECKSUMHASH";
+  //   checksumInput.value = data.checksum;
+  //   form.appendChild(checksumInput);
+
+  //   document.body.appendChild(form);
+  //   form.submit();
+  // };
+
   const handlePayment = async () => {
-    const res = await fetch("/api/paytm/create-order", {
+    // mock payment
+    const paymentRes = await fetch("/api/mock-payment", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+    });
+
+    const paymentData = await paymentRes.json();
+
+    // save order
+    await fetch("/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        email: "test@gmail.com",
-        amount: 499,
+        userName: name,
+        email: email,
+        phone: phone,
+        address: address,
+        city: city,
+        state: state,
+        pincode: pincode,
+        items: cartItems,
+        subtotal,
+        shipping,
+        totalAmount:total,
+        paymentMethod: "Mock",
+        paymentStatus: "paid",
+        transactionId: paymentData.transactionId,
+        orderId: paymentData.orderId,
       }),
     });
 
-    const data = await res.json();
-
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = "https://securegw-stage.paytm.in/order/process";
-
-    Object.keys(data.paytmParams).forEach((key) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = data.paytmParams[key];
-      form.appendChild(input);
-    });
-
-    const checksumInput = document.createElement("input");
-    checksumInput.type = "hidden";
-    checksumInput.name = "CHECKSUMHASH";
-    checksumInput.value = data.checksum;
-    form.appendChild(checksumInput);
-
-    document.body.appendChild(form);
-    form.submit();
+    clearCartStorage();
+    router.push("/success");
   };
+
 
   return (
     <section className="bg-gray-100 min-h-screen py-10">
@@ -127,7 +171,8 @@ const Checkout = () => {
                   className="input border px-1 py-1 border-gray-400 rounded"
                   placeholder="Email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  readOnly
+                  // onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
                   className="input border px-1 py-1 border-gray-400 rounded"
@@ -253,12 +298,12 @@ const Checkout = () => {
             >
               Place Order
             </button>
-            <Link
+            {/* <Link
               href="/order"
               className="w-full mt-4 block text-center text-gray-700 hover:underline"
             >
               View My Orders
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

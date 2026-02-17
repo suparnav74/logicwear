@@ -7,7 +7,6 @@ export interface Variant {
 }
 
 export interface Product {
-  [x: string]: any;
   _id: string;
   title: string;
   slug: string;

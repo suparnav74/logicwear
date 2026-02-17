@@ -5,7 +5,7 @@ import { FaCartShopping } from "react-icons/fa6";
 import { IoMdCloseCircle } from "react-icons/io";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
 import { MdDelete, MdAccountCircle } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef  } from "react";
 import { getCart, clearCartStorage, saveCart } from "@/utils/cart";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -16,6 +16,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const Router = useRouter();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Increase quantity
   const increaseQty = (id: string) => {
@@ -63,6 +64,23 @@ const Navbar = () => {
     Router.push("/login");
   };
 
+  useEffect(() => {
+  function handleClickOutside(event: MouseEvent) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOpenDropdown(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
   return (
     <>
       {/* Navbar */}
@@ -107,7 +125,7 @@ const Navbar = () => {
             </Link>
           </nav>
           {isLoggedIn ? (
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setOpenDropdown(!openDropdown)}
                 className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-4 md:mt-0"

@@ -5,6 +5,7 @@ import { getCart, saveCart } from "@/utils/cart";
 import { useParams, useRouter } from "next/navigation";
 import { Product, Variant } from "@/types/product";
 import { fetchProductBySlug } from "@/services/productService";
+import { toast } from "react-toastify";
 
 const ProductDetails = () => {
   const [pincode, setPincode] = useState("");
@@ -15,6 +16,7 @@ const ProductDetails = () => {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     console.log("Fetching product with slug:", slug);
@@ -24,7 +26,7 @@ const ProductDetails = () => {
       if (data?.variants?.length > 0) {
         setSelectedVariant(data.variants[0]);
       }
-    };
+    }
     if (slug) loadProduct();
   }, [slug]);
 
@@ -66,12 +68,24 @@ const ProductDetails = () => {
     let cart = getCart();
 
     const existingItem = cart.find((item) => item.variantId === variant.sku);
-
     if (existingItem) {
+      const newQty = existingItem.qty + quantity;
+
+      if (newQty > variant.availableQty) {
+        toast.error("You cannot add more than available stock")
+        //alert("You cannot add more than available stock");
+        return;
+      }
+
       cart = cart.map((item) =>
-        item.variantId === variant.sku ? { ...item, qty: item.qty + 1 } : item,
+        item.variantId === variant.sku ? { ...item, qty: newQty } : item,
       );
     } else {
+      if (quantity > variant.availableQty) {
+        toast.error("Only limited stock available")
+        //alert("Only limited stock available");
+        return;
+      }
       cart.push({
         variantId: variant.sku,
         id: product._id,
@@ -80,16 +94,21 @@ const ProductDetails = () => {
         image: "/tshirt.webp",
         size: variant.size,
         color: variant.color,
-        qty: 1,
+        qty: quantity,
       });
-    }
 
-    saveCart(cart);
-    alert("✅ Product added to cart");
+      saveCart(cart);
+      toast.success("✅ Product added to cart");
+    }
   };
 
   const handleBuyNow = () => {
     if (!product || !selectedVariant) return;
+    if (quantity > selectedVariant.availableQty) {
+      toast.error("Only limited stock available");
+      //alert("Only limited stock available");
+      return;
+    }
 
     const cart = [
       {
@@ -288,7 +307,7 @@ const ProductDetails = () => {
                   </div>
                 </div>
               </div>
-            
+
               <div className="mt-2 p-2 bg-gray-50">
                 <h3 className="font-medium text-gray-900 mb-2">
                   Check Delivery Availability
@@ -321,7 +340,43 @@ const ProductDetails = () => {
                   </p>
                 )}
               </div>
-                <div className="flex mt-6">
+              <div className="flex items-center gap-3 mt-4">
+                <span className="font-medium">Quantity:</span>
+
+                <button
+                  onClick={() =>
+                    setQuantity((prev) => (prev > 1 ? prev - 1 : 1))
+                  }
+                  className="px-3 py-1 border rounded"
+                >
+                  -
+                </button>
+
+                <span className="px-3">{quantity}</span>
+
+                <button
+                  onClick={() => {
+                    if (!selectedVariant) return;
+
+                    if (quantity < selectedVariant.availableQty) {
+                      setQuantity((prev) => prev + 1);
+                    } else {
+                      alert("No more stock available");
+                    }
+                  }}
+                  className="px-3 py-1 border rounded"
+                >
+                  +
+                </button>
+
+                {selectedVariant && (
+                  <span className="text-sm text-gray-500">
+                    ({selectedVariant.availableQty} Item Left)
+                  </span>
+                )}
+              </div>
+
+              <div className="flex mt-6">
                 <span className="title-font font-medium text-2xl text-gray-900">
                   ₹{selectedVariant?.price}
                 </span>
@@ -331,15 +386,21 @@ const ProductDetails = () => {
                 >
                   Buy Now
                 </button>
-                <button
-                  onClick={() => {
-                    if (!selectedVariant) return;
-                    addToCart(product, selectedVariant);
-                  }}
-                  className="flex ml-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
-                >
-                  Add to Cart
-                </button>
+                {selectedVariant?.availableQty === 0 ? (
+                  <button disabled className="ml-4 bg-gray-400 px-6 py-2 text-white rounded cursor-not-allowed">
+                    Out of Stock
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (!selectedVariant) return;
+                      addToCart(product, selectedVariant);
+                    }}
+                    className="flex ml-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+                  >
+                    Add to Cart
+                  </button>
+                )}
                 {/* <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
                   <svg
                     fill="currentColor"
