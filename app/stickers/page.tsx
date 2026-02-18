@@ -36,6 +36,7 @@ const Stickers = () => {
                     width={300}
                     height={400}
                     className="inline-block w-full h-auto object-contain"
+                    loading="eager"
                   />
 
                   <div className="mt-4 text-center">

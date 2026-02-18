@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       console.log("Stock update result:", result);
     }
 
-    return NextResponse.json({ success: true, order });
+    return NextResponse.json({ success: true, order },{ status: 200 });
   } catch (error) {
     return NextResponse.json(
       { success: false, message: "Order creation failed", error },

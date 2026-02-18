@@ -96,6 +96,7 @@ const Navbar = () => {
               alt="logo"
               width={100}
               height={50}
+              className="h-auto w-auto"
             />
           </Link>
           <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base  font-bold justify-center">

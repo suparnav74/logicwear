@@ -26,7 +26,7 @@ const ProductDetails = () => {
       if (data?.variants?.length > 0) {
         setSelectedVariant(data.variants[0]);
       }
-    }
+    };
     if (slug) loadProduct();
   }, [slug]);
 
@@ -72,7 +72,7 @@ const ProductDetails = () => {
       const newQty = existingItem.qty + quantity;
 
       if (newQty > variant.availableQty) {
-        toast.error("You cannot add more than available stock")
+        toast.error("You cannot add more than available stock");
         //alert("You cannot add more than available stock");
         return;
       }
@@ -82,7 +82,7 @@ const ProductDetails = () => {
       );
     } else {
       if (quantity > variant.availableQty) {
-        toast.error("Only limited stock available")
+        toast.error("Only limited stock available");
         //alert("Only limited stock available");
         return;
       }
@@ -361,7 +361,7 @@ const ProductDetails = () => {
                     if (quantity < selectedVariant.availableQty) {
                       setQuantity((prev) => prev + 1);
                     } else {
-                      alert("No more stock available");
+                      toast.error("No more stock available");
                     }
                   }}
                   className="px-3 py-1 border rounded"
@@ -382,12 +382,20 @@ const ProductDetails = () => {
                 </span>
                 <button
                   onClick={handleBuyNow}
-                  className="flex ml-7 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+                  disabled={selectedVariant?.availableQty === 0}
+                  className={`flex ml-7 text-white border-0 py-2 px-6 focus:outline-none  rounded ${
+                    selectedVariant?.availableQty === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-indigo-500 hover:bg-indigo-600"
+                  }`}
                 >
                   Buy Now
                 </button>
                 {selectedVariant?.availableQty === 0 ? (
-                  <button disabled className="ml-4 bg-gray-400 px-6 py-2 text-white rounded cursor-not-allowed">
+                  <button
+                    disabled
+                    className="ml-4 bg-gray-400 px-6 py-2 text-white rounded cursor-not-allowed"
+                  >
                     Out of Stock
                   </button>
                 ) : (

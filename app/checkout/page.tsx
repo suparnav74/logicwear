@@ -6,6 +6,7 @@ import { getCart, saveCart,clearCartStorage } from "@/utils/cart";
 // import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getUserFromToken } from "@/utils/getUser";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([...getCart()]);
@@ -113,7 +114,7 @@ const Checkout = () => {
     const paymentData = await paymentRes.json();
 
     // save order
-    await fetch("/api/order", {
+    const res = await fetch("/api/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -136,9 +137,13 @@ const Checkout = () => {
         orderId: paymentData.orderId,
       }),
     });
-
-    clearCartStorage();
+    if (res.status === 200){
+      clearCartStorage();
     router.push("/success");
+    }
+    else
+      toast.error("Order not successfully placed.Please try again")
+      return;
   };
 
 

@@ -66,12 +66,12 @@ const Orders = () => {
               <div className="space-y-3">
                 {order.items.map((item, index) => (
                   <div key={index} className="flex gap-4 items-center">
-                    <Image
+                    <Image 
                       src={item.image}
-                      alt={item.title}
+                      alt="image"
                       width={60}
                       height={60}
-                      className="rounded"
+                      className="rounded h-auto w-auto"
                     />
                     <div className="flex-1">
                       <p className="font-medium">{item.title}</p>
