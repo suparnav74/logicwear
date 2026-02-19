@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getCart, saveCart,clearCartStorage } from "@/utils/cart";
 // import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,6 @@ const Checkout = () => {
   const [cartItems, setCartItems] = useState([...getCart()]);
   const [payment, setPayment] = useState("online");
   const [name, setName] = useState("");
-  // const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
@@ -23,6 +22,27 @@ const Checkout = () => {
   const user = getUserFromToken();
     const email = user?.email;
 
+
+  useEffect(() => {
+      const fetchUser = async () => {
+        const res = await fetch(`/api/user/getUser?email=${email}`);
+  
+        const data = await res.json();
+       console.log("check data",data);
+        if (data.success) {
+          const userData = data.user;
+          setName(userData.name);
+          setPhone(userData.phone);
+          setAddress(userData.address);
+          setPincode(userData.pincode);
+          setCity(userData.city);
+          setState(userData.state);
+        }
+      };
+  
+      fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [email]);
   const handlePincodeChange = async (value: string) => {
     setPincode(value);
 

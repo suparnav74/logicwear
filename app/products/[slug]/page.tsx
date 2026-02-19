@@ -19,7 +19,6 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    console.log("Fetching product with slug:", slug);
     const loadProduct = async () => {
       const data = await fetchProductBySlug(slug);
       setProduct(data);
