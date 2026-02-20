@@ -41,7 +41,6 @@ const Checkout = () => {
       };
   
       fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [email]);
   const handlePincodeChange = async (value: string) => {
     setPincode(value);

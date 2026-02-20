@@ -99,7 +99,7 @@ const Login = () => {
               />
             </div>
             <div className="mt-5 text-left text-indigo-500">
-              <Link className="text-sm" href="/forgot">
+              <Link className="text-sm" href="/forgotPassword">
                 Forgot password?
               </Link>
             </div>
