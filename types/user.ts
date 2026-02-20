@@ -7,4 +7,6 @@ export interface User {
   city: string;
   state: string;
   pincode: number;
+  resetToken: string;
+  resetTokenExpiry: Date;
 }

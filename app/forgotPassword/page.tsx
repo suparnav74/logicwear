@@ -1,5 +1,20 @@
-
+"use client";
+import { useState } from "react";
 const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async () => {
+    const res = await fetch("/api/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    setMessage(data.message);
+  };
+
   return (
     <>
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-gray-50">
@@ -29,6 +44,7 @@ const ForgotPassword = () => {
               <input
                 type="email"
                 placeholder="Email id"
+                onChange={(e) => setEmail(e.target.value)}
                 className="bg-transparent text-gray-500 placeholder-gray-500 outline-none text-sm w-full h-full"
                 required
               />
@@ -36,10 +52,12 @@ const ForgotPassword = () => {
 
             <button
               type="submit"
+              onClick={handleSubmit}
               className="mt-5 mb-11 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity"
             >
-              Reset Password
+              Send Reset Link
             </button>
+            {message && <p className="mt-3">{message}</p>}
           </form>
         </div>
       </div>
