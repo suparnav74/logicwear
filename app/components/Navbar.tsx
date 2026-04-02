@@ -5,7 +5,7 @@ import { FaCartShopping } from "react-icons/fa6";
 import { IoMdCloseCircle } from "react-icons/io";
 import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
 import { MdDelete, MdAccountCircle } from "react-icons/md";
-import { useEffect, useState, useRef  } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getCart, clearCartStorage, saveCart } from "@/utils/cart";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -14,8 +14,9 @@ const Navbar = () => {
   const [openCart, setOpenCart] = useState(false);
   const [cartItems, setCartItems] = useState([...getCart()]);
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { isLoggedIn, logout } = useAuth();
-  const Router = useRouter();
+  const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Increase quantity
@@ -51,8 +52,13 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    saveCart(cartItems);
-  }, [cartItems]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) saveCart(cartItems);
+  }, [cartItems, mounted]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -61,26 +67,28 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    Router.push("/login");
+    router.push("/login");
   };
 
   useEffect(() => {
-  function handleClickOutside(event: MouseEvent) {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setOpenDropdown(false);
+    if (!mounted) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpenDropdown(false);
+      }
     }
-  }
 
-  document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mounted]);
 
+  if (!mounted) return null;
   return (
     <>
       {/* Navbar */}
@@ -138,12 +146,14 @@ const Navbar = () => {
                 <div className="absolute right-0 mt-2 w-40 bg-blue-50 border-md text-black shadow-md rounded">
                   <Link
                     href="/account"
+                    onClick={() => setOpenDropdown(false)}
                     className="block px-4 py-2 hover:bg-blue-200 rounded"
                   >
                     My Account
                   </Link>
                   <Link
                     href="/orders"
+                    onClick={() => setOpenDropdown(false)}
                     className="block px-4 py-2 hover:bg-blue-200 rounded"
                   >
                     My Orders
@@ -160,7 +170,7 @@ const Navbar = () => {
           ) : (
             <Link
               href="/login"
-              className="inline-flex items-center bg-gray-900 text-white px-3 py-1 rounded-md text-sm font-medium 
+              className="inline-flex items-center bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium 
              hover:bg-blue-600 transition-colors duration-200 mt-4 md:mt-0"
             >
               Login
@@ -215,49 +225,54 @@ const Navbar = () => {
           </div>
         </div> */}
         <div className="p-4 space-y-4 overflow-y-auto h-[70%]">
-          {cartItems.length === 0 && (
+          {cartItems.length === 0 ? (
             <p className="text-center text-gray-500">Your cart is empty</p>
-          )}
+          ) : (
+            cartItems.map((item, index) => (
+              <div
+                key={`${item.id}-${index}`}
+                className="flex gap-6 border-b pb-4"
+              >
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  width={60}
+                  height={80}
+                />
 
-          {cartItems.map((item, index) => (
-            <div
-              key={`${item.id}-${index}`}
-              className="flex gap-6 border-b pb-4"
-            >
-              <Image src={item.image} alt={item.name} width={60} height={80} />
+                <div className="flex-1  text-black">
+                  <h3 className="font-medium">{item.name}</h3>
+                  <p className="text-sm text-gray-600">₹{item.price}</p>
+                  <p className="text-sm text-gray-600">Color : {item.color}</p>
+                  <p className="text-sm text-gray-600">Size : {item.size}</p>
+                  {/* Quantity Controls */}
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      onClick={() => decreaseQty(item.id)}
+                      className="px-2 py-1 text-xl"
+                    >
+                      <FiMinusCircle />
+                    </button>
+                    <span>{item.qty}</span>
+                    <button
+                      onClick={() => increaseQty(item.id)}
+                      className="px-2 py-1 text-xl"
+                    >
+                      <FiPlusCircle />
+                    </button>
+                  </div>
 
-              <div className="flex-1  text-black">
-                <h3 className="font-medium">{item.name}</h3>
-                <p className="text-sm text-gray-600">₹{item.price}</p>
-                <p className="text-sm text-gray-600">Color : {item.color}</p>
-                <p className="text-sm text-gray-600">Size : {item.size}</p>
-                {/* Quantity Controls */}
-                <div className="flex items-center gap-2 mt-2">
+                  {/* Remove */}
                   <button
-                    onClick={() => decreaseQty(item.id)}
-                    className="px-2 py-1 text-xl"
+                    onClick={() => removeItem(item.id)}
+                    className="text-xl text-red-500 mt-2 mx-2"
                   >
-                    <FiMinusCircle />
-                  </button>
-                  <span>{item.qty}</span>
-                  <button
-                    onClick={() => increaseQty(item.id)}
-                    className="px-2 py-1 text-xl"
-                  >
-                    <FiPlusCircle />
+                    <MdDelete />
                   </button>
                 </div>
-
-                {/* Remove */}
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="text-xl text-red-500 mt-2 mx-2"
-                >
-                  <MdDelete />
-                </button>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Footer */}
