@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+export const dynamic = "force-dynamic";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");

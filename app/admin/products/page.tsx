@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Variant, Product } from "@/types/product";
+export const dynamic = "force-dynamic";
 
 const EMPTY_VARIANT: Variant = {
   sku: "",

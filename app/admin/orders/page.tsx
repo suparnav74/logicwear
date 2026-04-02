@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { IOrder } from "@/types/order";
+export const dynamic = "force-dynamic";
 
 const STATUS_COLORS: Record<string, string> = {
   processing: "bg-blue-100 text-blue-700",

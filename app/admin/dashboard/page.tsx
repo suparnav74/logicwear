@@ -3,6 +3,7 @@ import {connectDB} from "@/lib/db";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
 import User from "@/models/User";
+export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
   await connectDB();
