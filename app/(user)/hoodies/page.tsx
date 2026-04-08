@@ -9,7 +9,7 @@ const Hoodies = () => {
   return (
     <div>
       <section className="text-gray-600 body-font bg-white">
-        <div className="container px-5 py-10 mx-auto">
+        <div className="max-w-7xl px-5 py-10 mx-auto w-full">
           <div className="flex flex-wrap text-center items-center -m-4">
             {hoodies.length === 0 && (
               <p>

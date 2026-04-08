@@ -4,7 +4,7 @@ const Content = () => {
   return (
     <>
       <section className="text-amber-50 body-font bg-gray-50">
-        <div className="container px-5 py-5 mx-auto">
+        <div className="max-w-7xl px-5 py-5 mx-auto w-full">
           <div className="flex flex-wrap -m-4">
             <div className="xl:w-1/3 md:w-1/2 p-4">
               <div className="border border-blue-400 p-6 rounded-lg">
