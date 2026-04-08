@@ -1,41 +1,49 @@
-// app/admin/dashboard/page.tsx
-import {connectDB} from "@/lib/db";
-import Order from "@/models/Order";
-import Product from "@/models/Product";
-import User from "@/models/User";
+"use client";
 export const dynamic = "force-dynamic";
 
-export default async function Dashboard() {
-  await connectDB();
+import { useEffect, useState } from "react";
 
-  const [totalOrders, totalProducts, totalUsers, revenueData] = await Promise.all([
-    Order.countDocuments(),
-    Product.countDocuments(),
-    User.countDocuments({ role: "user" }),
-    Order.aggregate([{ $group: { _id: null, total: { $sum: "$totalAmount" } } }]),
-  ]);
+interface Stats {
+  totalOrders: number;
+  totalProducts: number;
+  totalUsers: number;
+  totalRevenue: number;
+}
 
-  const totalRevenue = revenueData[0]?.total || 0;
+export default function Dashboard() {
+  const [stats, setStats] = useState<Stats | null>(null);
 
-  const stats = [
-    { label: "Total Orders", value: totalOrders, icon: "📦" },
-    { label: "Total Products", value: totalProducts, icon: "👕" },
-    { label: "Total Users", value: totalUsers, icon: "👤" },
-    { label: "Revenue", value: `₹${totalRevenue}`, icon: "💰" },
-  ];
+  useEffect(() => {
+    fetch("/api/admin/stats")
+      .then((r) => r.json())
+      .then((data) => setStats(data));
+  }, []);
+
+  const cards = stats
+    ? [
+        { label: "Total Orders",   value: stats.totalOrders,           icon: "📦" },
+        { label: "Total Products", value: stats.totalProducts,         icon: "👕" },
+        { label: "Total Users",    value: stats.totalUsers,            icon: "👤" },
+        { label: "Revenue",        value: `₹${stats.totalRevenue}`,   icon: "💰" },
+      ]
+    : [];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-      <div className="grid grid-cols-2 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-white rounded-lg p-6 shadow text-center">
-            <p className="text-4xl mb-2">{stat.icon}</p>
-            <p className="text-3xl font-bold">{stat.value}</p>
-            <p className="text-gray-500 mt-1">{stat.label}</p>
-          </div>
-        ))}
-      </div>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Dashboard</h1>
+      {!stats ? (
+        <p className="text-gray-400">Loading...</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-6">
+          {cards.map((card) => (
+            <div key={card.label} className="bg-white rounded-xl p-6 shadow text-center">
+              <p className="text-4xl mb-2">{card.icon}</p>
+              <p className="text-3xl font-bold text-gray-800">{card.value}</p>
+              <p className="text-gray-500 mt-1 text-sm">{card.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
