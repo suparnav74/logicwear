@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 
 const Footer = () => {
@@ -7,9 +8,7 @@ const Footer = () => {
         <div className="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
           <div className="w-64 shrink-0 md:mx-0 mx-auto text-center md:text-left">
             <a className="flex title-font font-medium items-center md:justify-start justify-center text-black">
-              <Image
-                src="/logo.png"
-                alt="logo" width={500}height={200}/>
+              <Image src="/logo.png" alt="logo" width={500} height={200} />
               {/* <span className="ml-3 text-xl">Logic Wear</span> */}
             </a>
             <p className="mt-2 text-sm text-black text-center">
@@ -17,111 +16,126 @@ const Footer = () => {
             </p>
           </div>
           <div className="grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
+            {/* Shop */}
             <div className="lg:w-1/4 md:w-1/2 w-full px-4">
               <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
                 SHOP
               </h2>
-              <nav className="list-none mb-10">
+              <nav className="list-none mb-10 space-y-2">
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    T-shirts
-                  </a>
+                  <Link
+                    href="/tshirts"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    T-Shirts
+                  </Link>
                 </li>
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Hoddies
-                  </a>
+                  <Link
+                    href="/hoodies"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    Hoodies
+                  </Link>
                 </li>
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Stickers
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
+                  <Link
+                    href="/mugs"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
                     Mugs
-                  </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/stickers"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    Stickers
+                  </Link>
                 </li>
               </nav>
             </div>
+
+            {/* Company */}
             <div className="lg:w-1/4 md:w-1/2 w-full px-4">
               <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
-                ABOUT
+                COMPANY
               </h2>
-              <nav className="list-none mb-10">
+              <nav className="list-none mb-10 space-y-2">
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    First Link
-                  </a>
+                  <Link href="/" className="text-gray-600 hover:text-gray-800">
+                    Home
+                  </Link>
                 </li>
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Second Link
-                  </a>
+                  <Link
+                    href="/about"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    About Us
+                  </Link>
                 </li>
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Third Link
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Fourth Link
-                  </a>
+                  <Link
+                    href="/contact"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    Contact Us
+                  </Link>
                 </li>
               </nav>
             </div>
+
+            {/* Contact */}
             <div className="lg:w-1/4 md:w-1/2 w-full px-4">
               <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
                 CONTACT
               </h2>
-              <nav className="list-none mb-10">
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    First Link
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Second Link
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Third Link
-                  </a>
-                </li>
-                <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Fourth Link
-                  </a>
-                </li>
+              <nav className="list-none mb-10 space-y-2">
+                <li className="text-gray-600">support@logicwear.com</li>
+                <li className="text-gray-600">+91 1234567890</li>
+                <li className="text-gray-600">Mumbai, India</li>
               </nav>
             </div>
+
+            {/* Policy */}
             <div className="lg:w-1/4 md:w-1/2 w-full px-4">
               <h2 className="title-font font-medium text-black tracking-widest text-sm mb-3">
                 POLICY
               </h2>
-              <nav className="list-none mb-10">
+              <nav className="list-none mb-10 space-y-2">
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    First Link
-                  </a>
+                  <Link
+                    href="/privacy-policy"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    Privacy Policy
+                  </Link>
                 </li>
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Second Link
-                  </a>
+                  <Link
+                    href="/terms"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    Terms & Conditions
+                  </Link>
                 </li>
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Third Link
-                  </a>
+                  <Link
+                    href="/return-policy"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    Return Policy
+                  </Link>
                 </li>
                 <li>
-                  <a className="text-gray-600 hover:text-gray-800">
-                    Fourth Link
-                  </a>
+                  <Link
+                    href="/shipping-policy"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    Shipping Policy
+                  </Link>
                 </li>
               </nav>
             </div>

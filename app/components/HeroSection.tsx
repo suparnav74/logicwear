@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -29,13 +30,19 @@ const HeroSection = () => {
               just wear clothes, you wear ideas. Built for the digital
               generation. Styled for real life.
             </p>
-            <div className="flex justify-center mb-10">
-              <button className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
-                Button
-              </button>
-              <button className="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg">
-                Button
-              </button>
+            <div className="flex justify-center gap-4 mb-10">
+              <Link
+                href="/tshirts"
+                className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+              >
+                Shop Now →
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg"
+              >
+                Our Story
+              </Link>
             </div>
           </div>
         </div>

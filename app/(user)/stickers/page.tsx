@@ -41,9 +41,9 @@ const Stickers = () => {
                     />
 
                     <div className="mt-4 text-center">
-                      <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                        T-SHIRTS
-                      </h3>
+                      {/* <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
+                        Sticker
+                      </h3> */}
 
                       <h2 className="text-gray-900 title-font text-lg font-medium">
                         {product.title}

@@ -9,15 +9,18 @@ import { useEffect, useState, useRef } from "react";
 import { getCart, clearCartStorage, saveCart } from "@/utils/cart";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { IoMdArrowDropdown  } from "react-icons/io";
 
 const Navbar = () => {
   const [openCart, setOpenCart] = useState(false);
   const [cartItems, setCartItems] = useState([...getCart()]);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [openShop, setOpenShop] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const shopRef = useRef<HTMLDivElement>(null);
 
   // Increase quantity
   const increaseQty = (id: string) => {
@@ -79,6 +82,9 @@ const Navbar = () => {
       ) {
         setOpenDropdown(false);
       }
+      if (shopRef.current && !shopRef.current.contains(event.target as Node)) {
+        setOpenShop(false);
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -107,31 +113,50 @@ const Navbar = () => {
               className="h-auto w-auto"
             />
           </Link>
-          <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base  font-bold justify-center">
-            <Link
-              href={"/tshirts"}
-              className="mr-5 hover:text-blue-600 text-black"
-            >
-              Tshirts
+          <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-lg font-semibold justify-center">
+            <Link href="/" className="mr-5 hover:text-blue-600 text-black">
+              Home
+            </Link>
+            <Link href="/about" className="mr-5 hover:text-blue-600 text-black">
+              About
             </Link>
             <Link
-              href={"/hoodies"}
+              href="/contact"
               className="mr-5 hover:text-blue-600 text-black"
             >
-              Hoodies
+              Contact
             </Link>
-            <Link
-              href={"/mugs"}
-              className="mr-5 hover:text-blue-600 text-black"
-            >
-              Mugs
-            </Link>
-            <Link
-              href={"/stickers"}
-              className="mr-5 hover:text-blue-600 text-black"
-            >
-              Stickers
-            </Link>
+
+            {/* Shop Dropdown */}
+            <div className="relative mr-5" ref={shopRef}>
+              <button
+                onClick={() => setOpenShop(!openShop)}
+                className="flex items-center gap-1 font-semibold text-black hover:text-blue-600"
+              >
+                Shop
+                <IoMdArrowDropdown  className={`w-8 h-8 transition-transform ${openShop ? "rotate-180" : ""}`}/>
+              </button>
+
+              {openShop && (
+                <div className="absolute top-9 left-0 bg-gray-50 shadow-lg rounded-lg w-35 z-50 border border-gray-200">
+                  {[
+                    { href: "/tshirts", label: "👕 Tshirts" },
+                    { href: "/hoodies", label: "🧥 Hoodies" },
+                    { href: "/mugs", label: "☕ Mugs" },
+                    { href: "/stickers", label: "🎨 Stickers" },
+                  ].map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpenShop(false)}
+                      className="block px-4 py-2.5 text-base text-black hover:bg-blue-100 hover:text-blue-600 transition first:rounded-t-lg last:rounded-b-lg"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
           {isLoggedIn ? (
             <div className="relative" ref={dropdownRef}>

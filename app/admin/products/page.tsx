@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Variant, Product } from "@/types/product";
 export const dynamic = "force-dynamic";
+import { CgCloseR } from "react-icons/cg";
 
 const EMPTY_VARIANT: Variant = {
   sku: "",
@@ -45,7 +46,7 @@ export default function AdminProducts() {
       await fetchProducts();
     }
     loadProducts();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openAdd = () => {
@@ -121,7 +122,7 @@ export default function AdminProducts() {
     fetchProducts();
   };
 
-  //  Auto-generate slug from title 
+  //  Auto-generate slug from title
   const handleTitleChange = (val: string) => {
     setForm((prev) => ({
       ...prev,
@@ -287,9 +288,18 @@ export default function AdminProducts() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h2 className="text-lg font-bold mb-4 text-black">
-                {editProduct ? "Edit Product" : "Add Product"}
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold text-black">
+                  {editProduct ? "Edit Product" : "Add Product"}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-500 hover:text-red-500 hover:bg-gray-100 rounded-full p-1 transition text-2xl"
+                >
+                  <CgCloseR />
+                </button>
+              </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Title */}
