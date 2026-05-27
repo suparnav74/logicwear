@@ -113,30 +113,9 @@ const Footer = () => {
                     Privacy Policy
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="text-gray-600 hover:text-gray-800"
-                  >
-                    Terms & Conditions
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/return-policy"
-                    className="text-gray-600 hover:text-gray-800"
-                  >
-                    Return Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/shipping-policy"
-                    className="text-gray-600 hover:text-gray-800"
-                  >
-                    Shipping Policy
-                  </Link>
-                </li>
+                <li>Terms & Conditions</li>
+                <li>Return Policy</li>
+                <li>Shipping Policy</li>
               </nav>
             </div>
           </div>

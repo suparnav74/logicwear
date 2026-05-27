@@ -2,11 +2,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,6 +29,7 @@ const Signup = () => {
         setEmail("");
         setPassword("");
         toast.success("Signup successful! Please log in.");
+        router.push("/");
       }
     } catch (error) {
       toast.error("Signup failed. Please try again.");
