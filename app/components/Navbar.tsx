@@ -9,7 +9,7 @@ import { useEffect, useState, useRef } from "react";
 import { getCart, clearCartStorage, saveCart } from "@/utils/cart";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { IoMdArrowDropdown  } from "react-icons/io";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 const Navbar = () => {
   const [openCart, setOpenCart] = useState(false);
@@ -17,6 +17,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [openShop, setOpenShop] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -99,10 +100,10 @@ const Navbar = () => {
     <>
       {/* Navbar */}
       <header className="body-font bg-white shadow-md sticky top-0 z-30">
-        <div className="mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center">
+        <div className="mx-auto flex items-center justify-between px-4 py-2">
           <Link
             href={"/"}
-            className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0 hover:scale-105 transition-transform"
+            className="flex title-font font-medium items-center text-gray-900 md:mb-0 hover:scale-105 transition-transform"
           >
             <Image
               src="/logo.png"
@@ -110,10 +111,10 @@ const Navbar = () => {
               alt="logo"
               width={100}
               height={50}
-              className="h-auto w-auto"
+              className="w-20 md:w-28 h-auto"
             />
           </Link>
-          <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-lg font-semibold justify-center">
+          <nav className="hidden md:ml-auto md:mr-auto md:flex flex-wrap items-center gap-6 text-lg font-semibold justify-center">
             <Link href="/" className="mr-5 hover:text-blue-600 text-black">
               Home
             </Link>
@@ -134,7 +135,9 @@ const Navbar = () => {
                 className="flex items-center gap-1 font-semibold text-black hover:text-blue-600"
               >
                 Shop
-                <IoMdArrowDropdown  className={`w-8 h-8 transition-transform ${openShop ? "rotate-180" : ""}`}/>
+                <IoMdArrowDropdown
+                  className={`w-8 h-8 transition-transform ${openShop ? "rotate-180" : ""}`}
+                />
               </button>
 
               {openShop && (
@@ -158,59 +161,116 @@ const Navbar = () => {
               )}
             </div>
           </nav>
-          {isLoggedIn ? (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setOpenDropdown(!openDropdown)}
-                className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-4 md:mt-0"
+          {/* Right buttons */}
+          <div className="flex items-center gap-2">
+            {isLoggedIn ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setOpenDropdown(!openDropdown)}
+                  className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded md:mt-0"
+                >
+                  <MdAccountCircle />
+                </button>
+
+                {openDropdown && (
+                  <div className="absolute right-0 mt-2 w-40 bg-blue-50 border-md text-black shadow-md rounded">
+                    <Link
+                      href="/account"
+                      onClick={() => setOpenDropdown(false)}
+                      className="block px-4 py-2 hover:bg-blue-200 rounded"
+                    >
+                      My Account
+                    </Link>
+                    <Link
+                      href="/orders"
+                      onClick={() => setOpenDropdown(false)}
+                      className="block px-4 py-2 hover:bg-blue-200 rounded"
+                    >
+                      My Orders
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 hover:bg-blue-200 rounded"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium 
+             hover:bg-blue-600 transition-colors duration-200 md:mt-0"
               >
-                <MdAccountCircle />
+                Login
+              </Link>
+            )}
+            <button
+              onClick={() => {
+                setCartItems(getCart());
+                setOpenCart(true);
+              }}
+              className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-1 md:mt-0"
+            >
+              <FaCartShopping />
+            </button>
+            {/* Mobile Hamburger */}
+            <button
+              className="md:hidden text-2xl text-black p-1"
+              onClick={() => setMobileMenu(!mobileMenu)}
+            >
+              {mobileMenu ? "✕" : "☰"}
+            </button>
+          </div>
+        </div>
+        {/* Mobile Menu */}
+        {mobileMenu && (
+          <div className="absolute top-full left-0 w-full md:hidden bg-white border-t shadow-lg px-6 py-5 space-y-4">
+            <Link href="/" className="block text-lg font-semibold">
+              Home
+            </Link>
+
+            <Link href="/about" className="block text-lg font-semibold">
+              About
+            </Link>
+
+            <Link href="/contact" className="block text-lg font-semibold">
+              Contact
+            </Link>
+            <div className="relative mr-5" ref={shopRef}>
+              <button
+                onClick={() => setOpenShop(!openShop)}
+                className="flex items-center gap-2 text-lg font-semibold"
+              >
+                Shop
+                <IoMdArrowDropdown
+                  className={`w-8 h-8 transition-transform ${openShop ? "rotate-180" : ""}`}
+                />
               </button>
 
-              {openDropdown && (
-                <div className="absolute right-0 mt-2 w-40 bg-blue-50 border-md text-black shadow-md rounded">
-                  <Link
-                    href="/account"
-                    onClick={() => setOpenDropdown(false)}
-                    className="block px-4 py-2 hover:bg-blue-200 rounded"
-                  >
-                    My Account
+              {openShop && (
+                <div className="pl-4 space-y-2">
+                  <Link href="/tshirts" className="block">
+                    👕 Tshirts
                   </Link>
-                  <Link
-                    href="/orders"
-                    onClick={() => setOpenDropdown(false)}
-                    className="block px-4 py-2 hover:bg-blue-200 rounded"
-                  >
-                    My Orders
+
+                  <Link href="/hoodies" className="block">
+                    🧥 Hoodies
                   </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 hover:bg-blue-200 rounded"
-                  >
-                    Logout
-                  </button>
+
+                  <Link href="/mugs" className="block">
+                    ☕ Mugs
+                  </Link>
+
+                  <Link href="/stickers" className="block">
+                    🎨 Stickers
+                  </Link>
                 </div>
               )}
             </div>
-          ) : (
-            <Link
-              href="/login"
-              className="inline-flex items-center bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium 
-             hover:bg-blue-600 transition-colors duration-200 mt-4 md:mt-0"
-            >
-              Login
-            </Link>
-          )}
-          <button
-            onClick={() => {
-              setCartItems(getCart());
-              setOpenCart(true);
-            }}
-            className="inline-flex items-center text-black text-2xl border-0 py-1 px-3 focus:outline-none hover:text-blue-600 rounded mt-4 md:mt-0"
-          >
-            <FaCartShopping />
-          </button>
-        </div>
+          </div>
+        )}
       </header>
       {/* Backdrop */}
       {openCart && (
